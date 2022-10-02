@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="tv_style">
+        <item name="android:textSize">18sp</item>
+        <item name="android:letterSpacing">-0.02</item>
+        <item name="android:textColor">@color/dark</item>
+        <item name="android:fontFamily">@font/poppins</item>
+    </style>
+
+    <style name="tv_style_2" parent="tv_style">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+    </style>
+
+
+
+
+</resources>
