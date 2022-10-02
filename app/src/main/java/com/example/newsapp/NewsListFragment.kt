@@ -9,53 +9,36 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import com.example.newsapp.adapter.NewsAdapter
+import com.example.newsapp.api.Api
+import com.example.newsapp.databinding.FragmentNewsListBinding
+import com.example.newsapp.model.NewsResult
+import kotlinx.android.synthetic.main.fragment_news_list.*
 
 class NewsListFragment : Fragment() {
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private val list = ArrayList<NewsResult>()
+    private var layoutManager: RecyclerView.LayoutManager? = null
+    private var adapter: RecyclerView.Adapter<NewsAdapter.NewsViewHolder>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_news_list, container, false)
-        Recycler_view.layoutManager= LinearLayoutManager(this
-        )
-
-        val model = ViewModelProviders.of(this).get(LiveData::class.java)
-        model.getFruitList().observe(this, Observer<List<ColorSpace.Model>>{ fruitList ->
-            // update UI
-
-            data.value=fruitList
-            da=fruitList!!
-            Log.d("MainActivity ","Data Send"+data.value!!.size.toString())
-            Recycler_view.adapter= RecyclerView.Adapter(this, data)
-            progress.visibility=View.GONE
-        })
-
+        val binding = FragmentNewsListBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        fun newInstance(param1: String, param2: String) =
-            NewsListFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(itemView, savedInstanceState)
+        rv_main.apply {
+            // set a LinearLayoutManager to handle Android
+            // RecyclerView behavior
+            layoutManager = LinearLayoutManager(activity)
+            // set the custom adapter to the RecyclerView
+            adapter = NewsAdapter()
+        }
     }
 }

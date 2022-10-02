@@ -9,6 +9,6 @@ data class Articles(
     val urlToImage: String,
     val publishedAt: String,
     val content: String,
-    val source: List<Sources>
+    val source: Sources
 
 )
