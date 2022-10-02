@@ -1,4 +1,4 @@
-package com.example.newsapp.api
+package com.example.newsapp.data.api
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -26,7 +26,7 @@ object RetrofitClient {
             .build()
     }
 
-    val apiService :  Api by lazy{
+    val api :  Api by lazy{
         retrofit.create(Api::class.java)
     }
 }

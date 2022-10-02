@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- PinEntryEditText is focused -->
-    <item android:state_focused="true">
+    <item android:state_checked="true">
         <bitmap android:src="@drawable/ic_baseline_bookmark_24"/>
     </item>
     <!-- PinEntryEditText is not focused -->
