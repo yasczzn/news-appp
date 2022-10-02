@@ -9,7 +9,11 @@
         android:id="@+id/newsListFragment"
         android:name="com.example.newsapp.NewsListFragment"
         android:label="News List"
-        tools:layout="@layout/fragment_news_list" />
+        tools:layout="@layout/fragment_news_list" >
+        <action
+            android:id="@+id/action_newsListFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/detailsFragment"
@@ -21,7 +25,11 @@
         android:id="@+id/bookmarkFragment"
         android:name="com.example.newsapp.BookmarkFragment"
         android:label="Bookmark"
-        tools:layout="@layout/fragment_bookmark" />
+        tools:layout="@layout/fragment_bookmark" >
+        <action
+            android:id="@+id/action_bookmarkFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"
