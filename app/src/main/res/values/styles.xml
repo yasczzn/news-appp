@@ -2,7 +2,7 @@
 <resources>
 
     <style name="tv_style">
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:letterSpacing">-0.02</item>
         <item name="android:textColor">@color/dark</item>
         <item name="android:fontFamily">@font/poppins</item>
@@ -12,6 +12,18 @@
         <item name="android:fontFamily">@font/poppins_medium</item>
     </style>
 
+    <style name="tv_style_title" parent="tv_style">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+    </style>
+
+    <style name="tv_style_au" parent="tv_style">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="tv_style_ct" parent="tv_style">
+        <item name="android:textSize">12sp</item>
+    </style>
 
 
 
