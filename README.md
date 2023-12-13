@@ -1,1 +1,3 @@
-# news-app-rr
+# news-appp
+
+my android mvvm training
