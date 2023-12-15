@@ -14,7 +14,7 @@ class NewsRepository(val db: ArticleDatabase) {
 
     suspend fun upsert(article: Article) = db.getArticleDao().upsert(article)
 
-    fun getFavoriteNews() = db.getArticleDao().getAllArticles()
+    fun getFavouriteNews() = db.getArticleDao().getAllArticles()
 
     suspend fun deleteArticle(article: Article) = db.getArticleDao().deleteArticle(article)
 }
