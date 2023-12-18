@@ -7,11 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.newsapp.databinding.FragmentBookmarkBinding
 import com.example.newsapp.ui.adapter.NewsAdapter
-import com.example.newsapp.ui.viewModel.MainViewModel
 
 class BookmarkFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
     private lateinit var adapter: NewsAdapter
 
     private var _binding: FragmentBookmarkBinding? = null

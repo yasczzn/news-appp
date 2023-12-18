@@ -3,13 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookmarkFragment">
+    tools:context=".ui.fragments.BookmarkFragment">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textAlignment="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_bookmark"
+            android:textSize="30sp"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/purple_500"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="12dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_bookmark"
