@@ -9,7 +9,9 @@ import android.view.View
 import android.widget.AbsListView
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,7 @@ import com.example.newsapp.ui.NewsApp
 import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.adapter.NewsAdapter
 import com.example.newsapp.util.Constants
+import com.example.newsapp.util.Resource
 
 import retrofit2.Call
 
@@ -50,7 +53,37 @@ class NewsListFragment : Fragment() {
                 putSerializable("article", it)
             }
             findNavController().navigate(R.id.action_newsListFragment_to_detailsFragment, bundle)
+        }
 
+        newsViewModel.newsList.observe(viewLifecycleOwner, Observer { response ->
+            when (response) {
+                is Resource.Success<*> -> {
+                    hideProgressBar()
+                    hideErrorMsg()
+                    response.data?.let { newsResult ->
+                        newsAdapter.differ.submitList(newsResult.articles.toList())
+                        val totalPages = newsResult.totalResults / Constants.QUERY_PAGE_SIZE + 2
+                        isLastPage = newsViewModel.newsListPage == totalPages
+                        if (isLastPage) {
+                            binding.rvMain.setPadding(0,0,0,0)
+                        }
+                    }
+                }
+                is Resource.Error<*> -> {
+                    hideErrorMsg()
+                    response.message?.let { message ->
+                        Toast.makeText(activity, "Error: $message", Toast.LENGTH_LONG).show()
+                        showErrorMsg(message)
+                    }
+                }
+                is Resource.Loading<*> -> {
+                    showProgressBar()
+                }
+            }
+        })
+
+        retryButton.setOnClickListener {
+            newsViewModel.getNewsList("id")
         }
     }
 
