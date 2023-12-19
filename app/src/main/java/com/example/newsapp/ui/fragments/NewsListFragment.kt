@@ -1,102 +1,124 @@
 package com.example.newsapp.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import androidx.fragment.app.Fragment
+
 import android.view.View
-import android.view.ViewGroup
+import android.widget.AbsListView
+import android.widget.Button
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentNewsListBinding
-import com.example.newsapp.data.model.NewsResult
+import com.example.newsapp.ui.NewsApp
+import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.ui.adapter.NewsAdapter
-import com.example.newsapp.ui.viewModel.MainViewModel
+import com.example.newsapp.util.Constants
 
 import retrofit2.Call
 
 class NewsListFragment : Fragment() {
 
-    private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: NewsAdapter
+    lateinit var newsViewModel: NewsViewModel
+    lateinit var newsAdapter: NewsAdapter
+    lateinit var retryButton: Button
+    lateinit var errorText: TextView
+    lateinit var itemNewsError: CardView
+    lateinit var binding: FragmentNewsListBinding
 
-    private var _binding: FragmentNewsListBinding? = null
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentNewsListBinding.bind(view)
+        itemNewsError = binding.itemNewsError.root
 
-    private val binding get() = _binding!!
+        val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.item_error, null)
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentNewsListBinding.inflate(inflater, container, false)
-        return binding.root
+        retryButton = binding.itemNewsError.retryButton
+        errorText = binding.itemNewsError.errorText
 
-        setupUI()
-        setupObservers()
-    }
+        newsViewModel = (activity as NewsApp).newsViewModel
+        setupHeadlinesRecycler()
 
+        newsAdapter.setOnItemClickListener {
+            val bundle = Bundle().apply {
+                putSerializable("article", it)
+            }
+            findNavController().navigate(R.id.action_newsListFragment_to_detailsFragment, bundle)
 
-
-    override fun onViewCreated(itemView: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(itemView, savedInstanceState)
-//        rv_main.apply {
-//            // set a LinearLayoutManager to handle Android
-//            // RecyclerView behavior
-//            setHasFixedSize(true)
-//            layoutManager = LinearLayoutManager(activity)
-//        }
-
-    }
-
-//    private fun setupViewModel() {
-//        viewModel = ViewModelProviders.of(
-//            this,
-//            ViewModelFactory(ApiHelper(RetrofitClient.api))
-//        ).get(MainViewModel::class.java)
-//    }
-
-    private fun setupUI() {
-//        rv_main.layoutManager = LinearLayoutManager(activity)
-//        adapter = NewsAdapter(arrayListOf())
-//        rv_main.addItemDecoration(
-//            DividerItemDecoration(
-//                rv_main.context,
-//                (rv_main.layoutManager as LinearLayoutManager).orientation
-//            )
-//        )
-//        rv_main.adapter = adapter
-    }
-
-    private fun setupObservers() {
-//        viewModel.getNews().observe(viewLifecycleOwner, Observer {
-//            it?.let { resource ->
-//                when (resource.status) {
-//                    Status.SUCCESS -> {
-//                        rv_main.visibility = View.VISIBLE
-//                        progressBar.visibility = View.GONE
-//                        resource.data?.let { list -> retrieveList(list) }
-//                    }
-//                    Status.ERROR -> {
-//                        rv_main.visibility = View.VISIBLE
-//                        progressBar.visibility = View.GONE
-//                        Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
-//                    }
-//                    Status.LOADING -> {
-//                        progressBar.visibility = View.VISIBLE
-//                        rv_main.visibility = View.GONE
-//                    }
-//                }
-//            }
-//        })
-    }
-
-    private fun retrieveList(users: Call<ArrayList<NewsResult>>) {
-        adapter.apply {
-            addUsers(list)
-            notifyDataSetChanged()
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    var isError = false
+    var isLoading = false
+    var isLastPage = false
+    var isScroll = false
+
+    private fun hideProgressBar() {
+        binding.progressBar.visibility = View.INVISIBLE
+        isLoading = false
+    }
+
+    private fun showProgressBar() {
+        binding.progressBar.visibility = View.VISIBLE
+        isLoading = true
+    }
+
+    private fun hideErrorMsg() {
+        itemNewsError.visibility = View.INVISIBLE
+        isError = false
+    }
+
+    private fun showErrorMsg(message: String) {
+        itemNewsError.visibility = View.VISIBLE
+        errorText.text = message
+        isError = true
+    }
+
+    val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+            val visibleItemCount = layoutManager.childCount
+            val totalItemCount = layoutManager.itemCount
+
+            val isNotError = !isError
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isAtLastItem = firstVisibleItem + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItem >= 0
+            val isTotalMoreThanVisible = totalItemCount >= Constants.QUERY_PAGE_SIZE
+            val shouldPaginate = isNotError && isNotLoadingAndNotLastPage && isAtLastItem
+                    && isNotAtBeginning && isTotalMoreThanVisible && isScroll
+
+            if (shouldPaginate) {
+                newsViewModel.getNewsList("id")
+                isScroll = false
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
+                isScroll = true
+            }
+        }
+    }
+
+    private fun setupHeadlinesRecycler() {
+        newsAdapter = NewsAdapter()
+        binding.rvMain.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@NewsListFragment.scrollListener)
+        }
     }
 
 }

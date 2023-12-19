@@ -1,16 +1,13 @@
 package com.example.newsapp.ui.adapter
 
 import android.view.LayoutInflater
-import android.view.OnReceiveContentListener
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.newsapp.R
+
 import com.example.newsapp.data.model.Article
-import com.example.newsapp.data.model.NewsResult
 import com.example.newsapp.databinding.ItemNewsBinding
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.NewsViewHolder>() {
